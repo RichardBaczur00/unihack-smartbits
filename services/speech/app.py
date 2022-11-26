@@ -1,7 +1,12 @@
+import os
+import time
+
 from typing import Any
 
 from fastapi import FastAPI, Depends, status
 from fastapi.responses import JSONResponse
+from fastapi_utils.tasks import repeat_every
+
 from fastapi_jwt_auth import AuthJWT
 from fastapi_jwt_auth.exceptions import AuthJWTException
 from pydantic import BaseModel
@@ -30,6 +35,22 @@ def authjwt_exception_handler(request: Any | None, exc: AuthJWTException):
         status_code=status.HTTP_401_UNAUTHORIZED,
         content={'detail': exc.message}
     )
+
+@app.on_event('startup')
+@repeat_every(seconds=10*60) # every ten minutes
+def clear_tmp_directory():
+    all_files = map(
+        lambda p: (int(p.split('-')[-1].split('.')[0]), p),
+        os.listdir('./tmp/')
+    )
+
+    old_files = filter(
+        lambda p: time.time() >= p[0],
+        all_files
+    )
+
+    for _, file in old_files:
+        os.remove(file)
 
 
 app.include_router(speech_router, prefix='/api/v1/speech', tags=['Speech'])
