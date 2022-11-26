@@ -3,6 +3,7 @@ from beanie import Document
 
 class Message(Document):
     username: str
+    glove_address: str
     is_phone: bool
     message: str
 

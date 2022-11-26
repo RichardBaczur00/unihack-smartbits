@@ -26,3 +26,11 @@ async def login_service(user: user_models.UserLogin, Authorize: AuthJWT):
         status_code=status.HTTP_403_FORBIDDEN,
         detail={'detail': 'Wrong user or password'}
     )
+
+
+async def refresh_service(Authorize: AuthJWT):
+    return {
+        'access_token': Authorize.create_access_token(
+            subject=Authorize.get_jwt_subject(), fresh=True
+        )
+    }

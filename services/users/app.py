@@ -7,9 +7,7 @@ from pydantic import BaseModel
 
 from db import init
 
-from models import users as users_models
-
-from services import users as user_services
+from routers.users import router as user_router
 
 
 class Settings(BaseModel):
@@ -22,7 +20,7 @@ def get_config():
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='token')
 
-app = FastAPI()
+app = FastAPI(openapi_url='/api/v1/users/openapi.json', docs_url='/api/v1/users/docs')
 
 
 @app.exception_handler(AuthJWTException)
@@ -37,17 +35,4 @@ def authjwt_exception_handler(request: Request, exc: AuthJWTException):
 async def start_db():
     await init.init_db()
 
-
-@app.post('/signup')
-async def register(user: users_models.UserRegister, Authorize: AuthJWT = Depends()):
-    return await user_services.register_services(user, Authorize)
-
-
-@app.post('/signin')
-async def login(user: users_models.UserLogin, Authorize: AuthJWT = Depends()):
-    return await user_services.login_services(user, Authorize)
-
-
-@app.get('/')
-def index():
-    return {'Message': 'Hello world!'}
+app.include_router(user_router, prefix='/api/v1/users', tags=['Users'])

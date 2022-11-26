@@ -15,7 +15,7 @@ async def create_user(user: users_models.UserRegister) -> dict:
 
 
 async def validate_user(user: users_models.UserLogin) -> bool:
-    potential = users_schemas.User.find_one(users_schemas.User.username == user.username)
+    potential = await users_schemas.User.find_one(users_schemas.User.username == user.username)
 
     if potential:
         return hashlib.sha256(bytes(user.password, 'utf-8')).hexdigest() == potential.password
