@@ -1,4 +1,6 @@
-from fastapi import FastAPI, Depends, Request, status
+import os
+
+from fastapi import FastAPI, Depends, Request
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi_jwt_auth import AuthJWT
@@ -11,7 +13,7 @@ from routers.users import router as user_router
 
 
 class Settings(BaseModel):
-    authjwt_secret_key: str = 'secret' # TODO: Change this later (!!!)
+    authjwt_secret_key: str = os.getenv('JWT_SECRET', 'secret')
 
 
 @AuthJWT.load_config

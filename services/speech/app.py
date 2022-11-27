@@ -15,7 +15,7 @@ from routers.speech import router as speech_router
 
 
 class Settings(BaseModel):
-    authjwt_secret_key: str = 'secret' # TODO: Change this later (!!!)
+    authjwt_secret_key: str = os.getenv('JWT_SECRET', 'secret')
 
 
 @AuthJWT.load_config

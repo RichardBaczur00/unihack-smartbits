@@ -5,6 +5,7 @@ services:
     image: 'mongo'
     volumes:
       - data:/data/db
+    env_file: ./env/mongo.env
   users:
     build:
       context: .
@@ -12,6 +13,7 @@ services:
     command: 'uvicorn app:app --host 0.0.0.0 --port 8001 --reload'
     volumes: 
       - ./services/users:/app
+    env_file: ./env/service.env
   messages:
     build:
       context: .
@@ -19,6 +21,7 @@ services:
     command: 'uvicorn app:app --host 0.0.0.0 --port 8002 --reload'
     volumes:
       - ./services/messages:/app
+    env_file: ./env/service.env
   speech:
     build: 
       context: .
@@ -26,6 +29,15 @@ services:
     command: 'uvicorn app:app --host 0.0.0.0 --port 8003 --reload'
     volumes:
       - ./services/speech:/app
+    env_file: ./env/service.env
+  files:
+    build:
+      context: .
+      dockerfile: dockerfiles/app.dockerfile
+    command: 'uvicorn app:app --host 0.0.0.0 --port 8004 --reload'
+    volumes:
+      - ./services/files:/app
+    env_file: ./env/service.env
   nginx:
     image: nginx:latest
     ports:
