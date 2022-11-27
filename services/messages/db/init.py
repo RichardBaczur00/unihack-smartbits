@@ -13,7 +13,7 @@ async def init_db():
         raise ValueError('Value of db_user and db_pass cannot be None.')
 
     client = motor.motor_asyncio.AsyncIOMotorClient(
-        f"mongodb://{db_user}:{db_pass}@mongodb:27017/unihack"
+        f"mongodb://{db_user}:{db_pass}@mongodb:27017"
     )
-    
-    await init_beanie(database=client.db_name, document_models=[message_schemas.Message])
+
+    await init_beanie(database=client.unihack, document_models=[message_schemas.Message])
